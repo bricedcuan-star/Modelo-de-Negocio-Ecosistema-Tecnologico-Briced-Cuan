@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Estratégico - Ecosistema SIEL & RETENCOL</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-green: #34d399;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .brand {
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .brand h1 {
+            font-size: 1.3rem;
+            color: var(--accent-blue);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            padding: 12px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(56, 189, 248, 0.08);
+            color: var(--accent-blue);
+        }
+
+        .nav-item.active {
+            background-color: var(--accent-blue);
+            color: var(--bg-primary);
+            font-weight: 600;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex-1;
+            width: calc(100% - 280px);
+            padding: 40px;
+            overflow-y: auto;
+            background-radial-gradient: circle at top right, rgba(56, 189, 248, 0.03), transparent;
+        }
+
+        .header-panel {
+            margin-bottom: 35px;
+        }
+
+        .header-panel h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .header-panel p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-top: 6px;
+        }
+
+        /* Canvas Content Cards */
+        .canvas-pane {
+            display: none;
+            animation: fadeIn 0.35s ease;
+        }
+
+        .canvas-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .grid-framework {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .card-block {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .card-block h3 {
+            font-size: 1.1rem;
+            color: var(--accent-blue);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .card-block ul {
+            list-style-type: none;
+        }
+
+        .card-block li {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #cbd5e1;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .card-block li::before {
+            content: "•";
+            color: var(--accent-green);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .highlight-box {
+            background: rgba(52, 211, 153, 0.04);
+            border-left: 4px solid var(--accent-green);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+        }
+
+        /* Specific Methodological Elements */
+        .method-tag {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent-blue);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .flow-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 140px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+        }
+
+        .flow-step .step-num {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 4px;
+        }
+
+        .flow-step .step-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .flow-step .step-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="brand">
+            <h1>SIEL & RETENCOL</h1>
+            <p>Ecosistema IA de Inteligencia Corporativa</p>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" onclick="switchPane('segmentos', this)">1. Segmentación Estratégica</li>
+            <li class="nav-item" onclick="switchPane('propuesta', this)">2. Ventaja Competitiva</li>
+            <li class="nav-item" onclick="switchPane('canales', this)">3. Fases de Canales</li>
+            <li class="nav-item" onclick="switchPane('relacion', this)">4. Relación con Cliente</li>
+            <li class="nav-item" onclick="switchPane('ingresos', this)">5. Fuentes de Ingresos</li>
+            <li class="nav-item" onclick="switchPane('recursos', this)">6. Recursos Clave</li>
+            <li class="nav-item" onclick="switchPane('actividades', this)">7. Actividades Clave</li>
+            <li class="nav-item" onclick="switchPane('asociaciones', this)">8. Mapa de Alianzas</li>
+            <li class="nav-item" onclick="switchPane('costos', this)">9. Estructura de Costos</li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        
+        <div id="segmentos" class="canvas-pane active">
+            <div class="header-panel">
+                <span class="method-tag">Metodología: Capas de Segmentación</span>
+                <h2>1. Segmentos de Clientes</h2>
+                <p>Identificación del campo de juego estratégico y los grupos con dolores urgentes.</p>
+            </div>
+            <div class="grid-framework">
+                <div class="card-block">
+                    <h3>Segmento Financiero & Contable</h3>
+                    <ul>
+                        <li><strong>Perfil Técnico:</strong> Contadores Públicos Independientes y Directores Financieros de firmas.</li>
+                        <li><strong>Capa Psicográfica:</strong> Sienten constante frustración por la carga operativa y ansiedad ante errores manuales que resulten en sanciones de la DIAN.</li>
+                        <li><strong>El Dolor Crítico:</strong> Pérdida de hasta 12 horas semanales digitando, calculando retenciones e interpretando el Decreto 1625 de forma manual.</li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <h3>Segmento de Licitadores (Construcción)</h3>
+                    <ul>
+                        <li><strong>Perfil Corporativo:</strong> Constructoras, ingenieros independientes y Proveedores B2B del Estado.</li>
+                        <li><strong>Capa Conductual:</strong> Monitorean diariamente el SECOP, pero de forma reactiva y desorganizada.</li>
+                        <li><strong>El Dolor Crítico:</strong> Pérdida de dinero y adjudicaciones por no detectar oportunidades a tiempo ni procesar los extensos PDFs de "Pliego Tipo 2" vigentes desde febrero de 2026.</li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <h3>Segmento Académico & Emergente</h3>
+                    <ul>
+                        <li><strong>Perfil:</strong> Estudiantes de últimos semestres, recién egresados en su primer empleo y micro-emprendedores.</li>
+                        <li><strong>Necesidad:</strong> Reducir la gigantesca curva de aprendizaje teórica para enfrentarse a la realidad legal del país sin cometer errores costosos.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <strong>💡 La Clave de Enfoque:</strong> "Nosotros no vendemos software; vendemos la recuperación de 15 horas de tiempo estratégico a la semana y la eliminación del miedo a los entes de control."
+            </div>
+        </div>
+
+        <div id="propuesta" class="canvas-pane">
+            <div class="header-panel">
+                <span class="method-tag">Metodología: Product-Market Fit</span>
+                <h2>2. Propuesta de Valor & Ventaja Competitiva</h2>
+                <p>La transformación de características operativas en valor real para el cliente.</p>
+            </div>
+            <div class="grid-framework">
+                <div class="card-block">
+                    <h3>Propuesta RETENCOL (Tributaria)</h3>
+                    <ul>
+                        <li><strong>Característica:</strong> Motor legal inteligente para automatización de retenciones bajo Decreto 1625.</li>
+                        <li><strong>Beneficio:</strong> Eliminación de errores en los cálculos, parametrización limpia y alertas en tiempo real.</li>
+                        <li><strong>Valor Real:</strong> <em>Paz mental frente a la DIAN</em> y transformación del contador de un digitador operativo a un asesor financiero estratégico.</li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <h3>Propuesta SIEL (Contratación)</h3>
+                    <ul>
+                        <li><strong>Característica:</strong> Extracción por Inteligencia Artificial y OCR de requerimientos de pliegos extensos (Pliego Tipo 2).</li>
+                        <li><strong>Beneficio:</strong> Creación inmediata de matrices de cumplimiento y semáforos de alertas normativas.</li>
+                        <li><strong>Valor Real:</strong> Multiplicar la velocidad de postulación e incrementar la tasa de ganancia de contratos del Estado sin sobrecargar al equipo.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="canales" class="canvas-pane">
+            <div class="header-panel">
+                <span class="method-tag">Metodología: Las 5 Fases del Canal</span>
+                <h2>3. Canales de Distribución</h2>
+                <p>El camino estructurado para que el cliente descubra, evalúe, compre y reciba la propuesta de valor.</p>
+            </div>
+            <div class="flow-container">
+                <div class="flow-step">
+                    <div class="step-num">1</div>
+                    <div class="step-title">Información</div>
+                    <div class="step-desc">Posicionamiento en LinkedIn Corporativo mediante contenido de valor legal y videos cortos en redes de educación contable.</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-num">2</div>
+                    <div class="step-title">Evaluación</div>
+                    <div class="step-desc">Webinars e infoproductos híbridos interactivos. Talleres prácticos en vivo donde se evalúa la herramienta frente a casos reales.</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-num">3</div>
+                    <div class="step-title">Compra</div>
+                    <div class="step-desc">Cierre ágil mediante pasarelas de pago digitales e integradas (SaaS) directamente en la Landing Page comercial.</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-num">4</div>
+                    <div class="step-title">Entrega</div>
+                    <div class="step-desc">Acceso inmediato en la nube (Despliegue ágil). Activación automatizada de la cuenta y el Dashboard SaaS.</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-num">5</div>
+                    <div class="step-title">Postventa</div>
+                    <div class="step-desc">Soporte técnico interactivo y actualización automática del software frente a cualquier cambio de ley emitido por el gobierno.</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="relacion" class="canvas-pane">
+            <div class="header-panel">
+                <span class="method-tag">Metodología: Los 4 Pilares de Relación</span>
+                <h2>4. Relación con los Clientes</h2>
+                <p>Estrategias continuas para conectar, retener y medir la lealtad del mercado.</p>
+            </div>
+            <div class="grid-framework">
+                <div class="card-block">
+                    <h3>Pilares Implementados</h3>
+                    <ul>
+                        <li><strong>Confianza & Transparencia:</strong> Respaldo total en las fuentes jurídicas de la IA. El sistema muestra de qué artículo o página del pliego extrajo el dato.</li>
+                        <li><strong>Empatía con la Base Contable:</strong> Creación de comunidades interactivas y soporte directo para egresados y emprendedores en sus primeras etapas profesionales.</li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <h3>¿Cómo medimos la Calidad de la Relación?</h3>
+                    <ul>
+                        <li><strong>Métricas Clave del SaaS:</strong> Tasa de retención de suscripción mensual (Churn Rate).</li>
+                        <li><strong>Feedback Directo:</strong> Encuestas automatizadas de satisfacción tras el uso del procesador de pliegos y el nivel de recomendación comunitaria (NPS).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="ingresos" class="canvas-pane">
+            <div class="header-panel">
+                <span class="method-tag">Enfoque: Monetización Recurrente Escalable</span>
+                <h2>5. Fuentes de Ingresos</h2>
+                <p>Estructura de flujos financieros basada en la democratización tecnológica.</p>
+            </div>
+            <div class="grid-framework">
+                <div class="card-block">
+                    <h3>Modelo de Suscripción SaaS (Recurrente)</h3>
+                    <ul>
+                        <li><strong>Planes Escalonados:</strong> Cobro mensual o anual diferenciado por volumen de transacciones contables o número de pliegos analizados con IA.</li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <h3>Estrategia Freemium & Alianzas</h3>
+                    <ul>
+                        <li><strong>Licencias Educativas:</strong> Accesos gratuitos o de costo ultra-bajo para estudiantes y emprendedores iniciales, asegurando la lealtad de marca antes de su salto al entorno corporativo de alto presupuesto.</li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <h3>Consultoría Premium</h3>
+                    <ul>
+                        <li><strong>Servicios Corporativos:</strong> Parametrización y personalización exclusiva de matrices de riesgos masivos para grandes empresas licitadoras.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="recursos" class="canvas-pane">
+            <div class="header-panel">
+                <span class="method-tag">Metodología: Clasificación de Activos Esenciales</span>
+                <h2>6. Recursos Clave</h2>
+                <p>Los elementos indispensables para operar, sostener y hacer crecer el ecosistema tecnológico.</p>
+            </div>
+            <div class="grid-framework">
+                <div class="card-block">
+                    <h3>Recursos Intelectuales (Inmateriales)</h3>
+                    <ul>
+                        <li><strong>Algoritmos Propios:</strong> La lógica estructurada de los 13 módulos del software.</li>
+                        <li><strong>Know-How Normativo:</strong> Conocimiento especializado en el Decreto 1625 y los procesos de contratación estatal colombianos.</li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <h3>Recursos Humanos & Físicos</h3>
+                    <ul>
+                        <li><strong>Talento:</strong> Dirección comercial estratégica (Founder) y equipo de soporte y desarrollo tecnológico (Socio técnico).</li>
+                        <li><strong>Físicos:</strong> Infraestructura de servidores en la nube y terminales de desarrollo de código.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="actividades" class="canvas-pane">
+            <div class="header-panel">
+                <span class="method-tag">Metodología: Procesos Operativos Críticos</span>
+                <h2>7. Actividades Clave</h2>
+                <p>Las acciones fundamentales en las que el negocio debe centrar su enfoque diario.</p>
+            </div>
+            <div class="grid-framework">
+                <div class="card-block">
+                    <h3>Desarrollo & Mantenimiento</h3>
+                    <ul>
+                        <li>Optimización continua de los 13 bloques o módulos del sistema (Módulos de Base, Autenticación, OCR, IA de extracción, etc.) para mantener la plataforma rápida, limpia y sin caídas de servidor.</li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <h3>Monitoreo y Actualización Legal</h3>
+                    <ul>
+                        <li>Seguimiento diario a los decretos de la DIAN y resoluciones de Colombia Compra Eficiente para ajustar de inmediato la lógica algorítmica del motor de IA.</li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <h3>Marketing B2B & Comunidad</h3>
+                    <ul>
+                        <li>Estrategias de contenido e infoproductos para mantener el flujo constante de leads calificados en la base de datos comercial.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="asociaciones" class="canvas-pane">
+            <div class="header-panel">
+                <span class="method-tag">Metodología: Estrategia de Mitigación de Vacíos (Win-Win)</span>
+                <h2>8. Asociaciones Clave / Mapa de Alianzas</h2>
+                <p>Resolución de debilidades operativas mediante alianzas estratégicas de mutuo beneficio.</p>
+            </div>
+            <div class="grid-framework">
+                <div class="card-block">
+                    <h3>El Vacío Crítico Identificado</h3>
+                    <p style="font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 15px;">
+                        La velocidad en el desarrollo de la arquitectura en la nube y la necesidad de auditar y blindar legalmente el motor de IA en tiempo real sin desatender la dirección comercial del negocio.
+                    </p>
+                </div>
+                <div class="card-block">
+                    <h3>Aliados Clave Seleccionados</h3>
+                    <ul>
+                        <li><strong>Consultores y Abogados Senior:</strong> Expertos en el medio contable y tributario (como William Vanegas o Pedro Buitrago).</li>
+                        <li><strong>SENA e Instituciones:</strong> Apoyo mediante semilleros institucionales y comunidad académica.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="grid-framework" style="margin-top: 10px;">
+                <div class="card-block">
+                    <h3>El Intercambio de Valor (Esquema Win-Win)</h3>
+                    <ul>
+                        <li><strong>Lo que les aportamos:</strong> Automatización total de sus procesos dándoles licencias corporativas premium gratis de la plataforma (les ahorramos hasta 15 horas de trabajo manual), además de visibilidad comercial y marca compartida (Co-branding) como validadores expertos en nuestros webinars y LinkedIn.</li>
+                        <li><strong>Lo que nos aportan ellos:</strong> Un sello oficial de garantía y respaldo normativo de alta trayectoria que elimina por completo el miedo y la desconfianza del cliente final a la hora de pagar la suscripción del software.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="costos" class="canvas-pane">
+            <div class="header-panel">
+                <span class="method-tag">Enfoque: Eficiencia de Capital Tecnológico</span>
+                <h2>9. Estructura de Costos</h2>
+                <p>Distribución de los recursos financieros invertidos en sostener la ventaja competitiva.</p>
+            </div>
+            <div class="grid-framework">
+                <div class="card-block">
+                    <h3>Costos de Infraestructura Tecnológica</h3>
+                    <ul>
+                        <li>Inversión mensual fija en bases de datos cloud, consumo de APIs de procesamiento de Inteligencia Artificial (OCR) y mantenimiento de licencias operativas de servidores.</li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <h3>Inversión en Desarrollo & Soporte</h3>
+                    <ul>
+                        <li>Recursos destinados a la optimización técnica del código, integración ágil de las actualizaciones y soporte al cliente para asegurar la continuidad de la plataforma.</li>
+                    </ul>
+                </div>
+                <div class="card-block">
+                    <h3>Costos de Adquisición (Marketing)</h3>
+                    <ul>
+                        <li>Presupuesto asignado al diseño de materiales comerciales, estructuración de eventos híbridos y herramientas para la captación directa de clientes corporativos (B2B).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function switchPane(paneId, clickedElement) {
+            // Remove active class from all panes
+            const panes = document.querySelectorAll('.canvas-pane');
+            panes.forEach(pane => pane.classList.remove('active'));
+
+            // Remove active class from all menu items
+            const menuItems = document.querySelectorAll('.nav-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+
+            // Activate chosen target pane
+            document.getElementById(paneId).classList.add('active');
+
+            // Highlight clicked navigation choice
+            clickedElement.classList.add('active');
+        }
+    </script>
+</body>
+</html>
